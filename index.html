@@ -729,41 +729,12 @@
         <div class="proc-label">Se procesează...</div>
     </div>
 
-    <!-- ===== SCREEN 1: START ===== -->
-    <div class="screen active" id="screen-start">
-        <div class="app-header">
-            <div class="app-logo">🧾</div>
-            <div class="app-title">Listă articole</div>
-            <div class="app-subtitle">Completează lista pentru casa de marcat prin voce</div>
-        </div>
-
-        <div id="ios-warning" class="ios-warn" style="display:none">
-            ⚠️ <strong>Atenție:</strong> Deschide linkul în <strong>Safari</strong> (iPhone) sau <strong>Chrome</strong>
-            (Android) — nu din WhatsApp direct.
-        </div>
-
-        <div class="card">
-            <div class="field-label">Numele firmei *</div>
-            <input class="field-input" id="input-firma" type="text" placeholder="ex: SC CAFENEA SRL"
-                autocomplete="organization" style="text-transform:uppercase;"
-                oninput="this.value=this.value.toUpperCase()" />
-
-            
-        <div class="tip-box" style="margin-bottom:12px;">
-            💡 <strong>Sfat:</strong> Pregătește lista scrisă și citește articolele pe rând în aplicație.
-        </div>
-
-        <button class="btn btn-primary" id="btn-start" onclick="startApp()">
-            ▶ Începe completarea listei
-        </button>
-    </div>
-
     <!-- ===== SCREEN 1B: MENIU LISTE ===== -->
     <div class="screen" id="screen-sessions">
         <div class="app-header">
             <div class="app-logo">&#128203;</div>
             <div class="app-title">Listele tale</div>
-            <div class="app-subtitle" id="sessions-subtitle">–</div>
+            <div class="app-subtitle" id="sessions-subtitle">Istoricul listelor salvate</div>
         </div>
 
         <div id="sessions-list"
@@ -787,7 +758,7 @@
         <div class="app-header" style="position:relative;">
             <div class="app-logo">&#127897;</div>
             <div class="app-title">Adaugă articole</div>
-            <div class="app-subtitle" id="firma-display">–</div>
+            <div class="app-subtitle" id="firma-display">Listă articole</div>
             <button onclick="backToSessions()"
                 style="position:absolute; top:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:7px 11px; font-size:18px; cursor:pointer; color:var(--muted); line-height:1;"
                 title="Meniu liste">☰</button>
@@ -917,7 +888,7 @@
         </div>
 
         <button class="btn btn-primary mt16" onclick="backToSessions()">📂 Înapoi la listele mele</button>
-        <button class="btn btn-outline" style="margin-top:10px;" onclick="resetApp()">🔄 Client nou</button>
+        <button class="btn btn-outline" style="margin-top:10px;" onclick="resetApp()">🔄 Listă nouă</button>
     </div>
 
 
@@ -984,61 +955,36 @@
             renderList();
         }
 
-        // ===== SCREEN 1: START =====
-        function detectInAppBrowser() {
-            // Detecteaza browserul integrat al WhatsApp sau Facebook (nu are acces la microfon)
-            const ua = navigator.userAgent || '';
-            const isWhatsApp = /WhatsApp/.test(ua);
-            const isFBBrowser = /FBAN|FBAV/.test(ua);
-            if (isWhatsApp || isFBBrowser) {
-                document.getElementById('ios-warning').style.display = 'block';
-            }
-        }
-        detectInAppBrowser();
-
         // ===== LOCALSTORAGE MULTI-SESIUNE =====
-        function lsKey(cui) { return 'lista_cmc_' + cui.replace(/\s/g, ''); }
+        function lsKey() { return 'lista_cmc_articole'; }
 
-        function getStorage(cui) {
-            const raw = localStorage.getItem(lsKey(cui));
+        function getStorage() {
+            const raw = localStorage.getItem(lsKey());
             if (!raw) return null;
             try {
                 const data = JSON.parse(raw);
-                // Migrare format vechi (o singura lista) -> nou (array)
-                if (data.articles && !data.sessions) {
-                    return {
-                        firma: data.firma, cui: data.cui, sessions: [{
-                            id: '0', name: 'Lista 1', articles: data.articles,
-                            sent: data.sent || false, savedAt: new Date().toISOString()
-                        }]
-                    };
-                }
                 return data;
-            } catch (e) { localStorage.removeItem(lsKey(cui)); return null; }
-        }
-
-        function putStorage(cui, data) {
-            localStorage.setItem(lsKey(cui), JSON.stringify(data));
-        }
-
-        function startApp() {
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
-            if (!firma) { alert('Te rugăm să introduci numele firmei.'); return; }
-            if (!cui) { alert('Te rugăm să introduci CUI-ul firmei.'); return; }
-            document.getElementById('firma-display').textContent = firma + ' | ' + cui;
-
-            const stored = getStorage(cui);
-            if (stored && stored.sessions && stored.sessions.length > 0) {
-                showSessionsMenu(firma, cui, stored.sessions);
-                return;
+            } catch (e) { 
+                localStorage.removeItem(lsKey()); 
+                return null; 
             }
-            // Prima utilizare: porneste direct
-            startNewSession(firma, cui, 'Lista 1');
         }
 
-        function showSessionsMenu(firma, cui, sessions) {
-            document.getElementById('sessions-subtitle').textContent = firma + ' — ' + cui;
+        function putStorage(data) {
+            localStorage.setItem(lsKey(), JSON.stringify(data));
+        }
+
+        // ===== INIT =====
+        window.addEventListener('DOMContentLoaded', () => {
+            const stored = getStorage();
+            if (stored && stored.sessions && stored.sessions.length > 0) {
+                showSessionsMenu(stored.sessions);
+            } else {
+                startNewSession('Lista 1');
+            }
+        });
+
+        function showSessionsMenu(sessions) {
             document.getElementById('sessions-list').innerHTML = sessions.map((s, idx) => `
                 <div class="card session-card" onclick="selectSession('${s.id}')">
                     <div style="flex:1; min-width:0;">
@@ -1053,8 +999,7 @@
         }
 
         function selectSession(id) {
-            const cui = document.getElementById('input-cui').value.trim();
-            const stored = getStorage(cui);
+            const stored = getStorage();
             const session = stored && stored.sessions.find(s => s.id === id);
             if (!session) return;
             currentSessionId = id;
@@ -1064,20 +1009,23 @@
         }
 
         function createNewSession() {
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
             const inp = document.getElementById('new-session-name').value.trim();
-            const stored = getStorage(cui) || { firma, cui, sessions: [] };
+            const stored = getStorage() || { sessions: [] };
             const name = inp || ('Lista ' + (stored.sessions.length + 1));
-            startNewSession(firma, cui, name);
+            startNewSession(name);
         }
 
-        function startNewSession(firma, cui, name) {
+        function startNewSession(name) {
             currentSessionId = Date.now().toString();
-            let stored = getStorage(cui) || { firma, cui, sessions: [] };
-            stored.firma = firma;
-            stored.sessions.push({ id: currentSessionId, name, articles: [], sent: false, savedAt: new Date().toISOString() });
-            putStorage(cui, stored);
+            let stored = getStorage() || { sessions: [] };
+            stored.sessions.push({ 
+                id: currentSessionId, 
+                name, 
+                articles: [], 
+                sent: false, 
+                savedAt: new Date().toISOString() 
+            });
+            putStorage(stored);
             articles = [];
             renderList();
             const inp = document.getElementById('new-session-name');
@@ -1086,44 +1034,38 @@
         }
 
         function deleteSession(id) {
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
-            const stored = getStorage(cui);
+            const stored = getStorage();
             if (!stored) return;
             stored.sessions = stored.sessions.filter(s => s.id !== id);
             if (stored.sessions.length === 0) {
-                localStorage.removeItem(lsKey(cui));
-                startNewSession(firma, cui, 'Lista 1');
+                localStorage.removeItem(lsKey());
+                startNewSession('Lista 1');
                 return;
             }
-            putStorage(cui, stored);
-            showSessionsMenu(firma, cui, stored.sessions);
+            putStorage(stored);
+            showSessionsMenu(stored.sessions);
         }
 
         function saveSession() {
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
-            if (!cui || !currentSessionId || articles.length === 0) return;
-            const stored = getStorage(cui) || { firma, cui, sessions: [] };
+            if (!currentSessionId || articles.length === 0) return;
+            const stored = getStorage() || { sessions: [] };
             const idx = stored.sessions.findIndex(s => s.id === currentSessionId);
             if (idx >= 0) {
                 stored.sessions[idx].articles = articles.slice();
                 stored.sessions[idx].savedAt = new Date().toISOString();
             }
-            putStorage(cui, stored);
+            putStorage(stored);
         }
 
         function backToSessions() {
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
-            const stored = getStorage(cui);
+            const stored = getStorage();
             currentSessionId = null;
             articles = [];
             renderList();
             if (stored && stored.sessions && stored.sessions.length > 0) {
-                showSessionsMenu(firma, cui, stored.sessions);
+                showSessionsMenu(stored.sessions);
             } else {
-                showScreen('screen-start');
+                startNewSession('Lista 1');
             }
         }
 
@@ -1234,8 +1176,6 @@
             st.style.color = '';
         }
 
-
-
         function hideOverlay() {
             document.getElementById('processing-overlay').classList.remove('show');
         }
@@ -1307,12 +1247,9 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> Se trimite...';
 
-            const firma = document.getElementById('input-firma').value.trim();
-            const cui = document.getElementById('input-cui').value.trim();
-
             const payload = {
-                firma: firma,
-                cui: cui,
+                firma: 'Client',
+                cui: 'N/A',
                 articole: articles,
                 timestamp: new Date().toLocaleString('ro-RO')
             };
@@ -1324,27 +1261,26 @@
                 mode: 'no-cors'
             })
                 .then(() => {
-                    showSuccess(firma, articles);
+                    showSuccess(articles);
                 })
                 .catch(() => {
-                    showSuccess(firma, articles); // no-cors returns opaque response; treat as success
+                    showSuccess(articles); // no-cors returns opaque response; treat as success
                 });
         }
 
-        function showSuccess(firma, arts) {
-            const cui = document.getElementById('input-cui').value.trim();
+        function showSuccess(arts) {
             // Marcam sesiunea curenta ca trimisa
-            const stored = getStorage(cui);
+            const stored = getStorage();
             if (stored && currentSessionId) {
                 const idx = stored.sessions.findIndex(s => s.id === currentSessionId);
                 if (idx >= 0) {
                     stored.sessions[idx].sent = true;
                     stored.sessions[idx].articles = arts.slice();
-                    putStorage(cui, stored);
+                    putStorage(stored);
                 }
             }
             document.getElementById('success-msg').innerHTML =
-                `<strong>${firma}</strong> — tehnicianul a primit lista!<br/>Mulțumim și pe curând! 😊`;
+                `Tehnicianul a primit lista!<br/>Mulțumim și pe curând! 😊`;
             document.getElementById('success-preview').innerHTML =
                 arts.map((a, i) => `<div><span>${i + 1}.</span>${a}</div>`).join('');
             showScreen('screen-success');
@@ -1356,13 +1292,9 @@
             articles = [];
             pendingArticle = '';
             renderList();
-            document.getElementById('input-firma').value = '';
-            document.getElementById('input-cui').value = '';
-            showScreen('screen-start');
+            startNewSession('Lista nouă');
         }
     </script>
 </body>
 
 </html>
-
-
