@@ -6,11 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>📋 Listă articole – casă de marcat</title>
 
-    <!-- Open Graph pentru WhatsApp preview -->
-    <meta property="og:title" content="📋 Completare listă articole" />
-    <meta property="og:description" content="Adaugă articolele tale prin voce – simplu și rapid!" />
+    <!-- Open Graph pentru WhatsApp/Facebook preview -->
+    <meta property="og:title" content="📋 Listă articole – casă de marcat" />
+    <meta property="og:description" content="Adaugă articolele tale prin voce – simplu și rapid! Aplicație pentru completare liste articole." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://imgur.com/a/S64T6ya" />
+    <meta property="og:url" content="https://castdatbit.github.io/lista-articole/" />
+    <meta property="og:image" content="https://i.imgur.com/YourImageID.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Aplicație listă articole cu recunoaștere vocală" />
+    
+    <!-- Twitter Card (opțional, pentru Twitter) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="📋 Listă articole – casă de marcat" />
+    <meta name="twitter:description" content="Adaugă articolele tale prin voce – simplu și rapid!" />
+    <meta name="twitter:image" content="https://i.imgur.com/YourImageID.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -871,8 +881,30 @@
                 adăugat toate articolele?</div>
             <div class="btn-2col mt12">
                 <button class="btn btn-outline" onclick="backToMain()">⬅ Nu, mai am</button>
-                <button class="btn btn-primary" id="send-btn" onclick="sendList()">📤 Da, trimite!</button>
+                <button class="btn btn-primary" id="send-btn" onclick="promptFirmaAndSend()">📤 Da, trimite!</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN 4B: FIRMA INPUT ===== -->
+    <div class="screen" id="screen-firma">
+        <div class="app-header">
+            <div class="app-logo">🏢</div>
+            <div class="app-title">Numele firmei</div>
+            <div class="app-subtitle">Introduceți numele firmei pentru care este lista</div>
+        </div>
+
+        <div class="card">
+            <div class="field-label">Numele firmei *</div>
+            <input class="field-input" id="input-firma-final" type="text" placeholder="ex: SC CAFENEA SRL"
+                autocomplete="organization" style="text-transform:uppercase;"
+                oninput="this.value=this.value.toUpperCase()" 
+                onkeydown="if(event.key==='Enter') sendListWithFirma()" />
+        </div>
+
+        <div class="btn-2col mt16">
+            <button class="btn btn-outline" onclick="backToFinish()">⬅ Înapoi</button>
+            <button class="btn btn-primary" onclick="sendListWithFirma()">📤 Trimite!</button>
         </div>
     </div>
 
@@ -1241,19 +1273,39 @@
             showScreen('screen-main');
         }
 
+        function backToFinish() {
+            showScreen('screen-finish');
+        }
+
+        // ===== SCREEN 4B: FIRMA PROMPT =====
+        function promptFirmaAndSend() {
+            document.getElementById('input-firma-final').value = '';
+            showScreen('screen-firma');
+            // Focus pe input dupa un mic delay
+            setTimeout(() => {
+                document.getElementById('input-firma-final').focus();
+            }, 300);
+        }
+
         // ===== SEND =====
-        function sendList() {
-            const btn = document.getElementById('send-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Se trimite...';
+        function sendListWithFirma() {
+            const firma = document.getElementById('input-firma-final').value.trim();
+            if (!firma) {
+                alert('Te rugăm să introduci numele firmei.');
+                return;
+            }
 
             const payload = {
-                firma: 'Client',
+                firma: firma,
                 cui: 'N/A',
                 articole: articles,
                 timestamp: new Date().toLocaleString('ro-RO')
             };
 
+            // Dezactivare buton si afisare spinner
+            const allButtons = document.querySelectorAll('#screen-firma button');
+            allButtons.forEach(btn => btn.disabled = true);
+            
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1261,14 +1313,14 @@
                 mode: 'no-cors'
             })
                 .then(() => {
-                    showSuccess(articles);
+                    showSuccess(firma, articles);
                 })
                 .catch(() => {
-                    showSuccess(articles); // no-cors returns opaque response; treat as success
+                    showSuccess(firma, articles); // no-cors returns opaque response; treat as success
                 });
         }
 
-        function showSuccess(arts) {
+        function showSuccess(firma, arts) {
             // Marcam sesiunea curenta ca trimisa
             const stored = getStorage();
             if (stored && currentSessionId) {
@@ -1276,11 +1328,12 @@
                 if (idx >= 0) {
                     stored.sessions[idx].sent = true;
                     stored.sessions[idx].articles = arts.slice();
+                    stored.sessions[idx].firma = firma; // Salvam si firma
                     putStorage(stored);
                 }
             }
             document.getElementById('success-msg').innerHTML =
-                `Tehnicianul a primit lista!<br/>Mulțumim și pe curând! 😊`;
+                `<strong>${firma}</strong> — tehnicianul a primit lista!<br/>Mulțumim și pe curând! 😊`;
             document.getElementById('success-preview').innerHTML =
                 arts.map((a, i) => `<div><span>${i + 1}.</span>${a}</div>`).join('');
             showScreen('screen-success');
@@ -1298,4 +1351,3 @@
 </body>
 
 </html>
-
