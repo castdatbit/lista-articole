@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>📋 Listă articole – casă de marcat</title>
 
+    <!-- Open Graph pentru WhatsApp/Facebook preview -->
     <meta property="og:title" content="📋 Listă articole – casă de marcat" />
     <meta property="og:description" content="Adaugă articolele tale prin voce – simplu și rapid! Aplicație pentru completare liste articole." />
     <meta property="og:type" content="website" />
@@ -15,6 +16,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Aplicație listă articole cu recunoaștere vocală" />
     
+    <!-- Twitter Card (opțional, pentru Twitter) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="📋 Listă articole – casă de marcat" />
     <meta name="twitter:description" content="Adaugă articolele tale prin voce – simplu și rapid!" />
@@ -726,6 +728,7 @@
 
 <body>
 
+    <!-- ===== PROCESSING OVERLAY ===== -->
     <div id="processing-overlay">
         <div class="proc-icon">🎙️</div>
         <div class="proc-dots">
@@ -734,9 +737,9 @@
             <div class="proc-dot"></div>
         </div>
         <div class="proc-label">Se procesează...</div>
- 
     </div>
 
+    <!-- ===== SCREEN 1B: MENIU LISTE ===== -->
     <div class="screen" id="screen-sessions">
         <div class="app-header">
             <div class="app-logo">&#128203;</div>
@@ -745,34 +748,29 @@
         </div>
 
         <div id="sessions-list"
-           
-  style="display:flex; flex-direction:column; gap:10px; flex:1; overflow-y:auto; min-height:0; margin-bottom:14px;">
+            style="display:flex; flex-direction:column; gap:10px; flex:1; overflow-y:auto; min-height:0; margin-bottom:14px;">
         </div>
 
+        <!-- Creare lista noua -->
         <div
-            style="display:flex;
-gap:8px; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:10px 12px; box-sizing:border-box;
-width:100%;">
+            style="display:flex; gap:8px; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:10px 12px; box-sizing:border-box; width:100%;">
             <input class="field-input" id="new-session-name" type="text"
                 placeholder="Nume listă nouă (ex: Casa 1, Cluj)..."
-                style="flex:1;
-padding:10px 12px; margin:0; border-radius:10px; min-width:0;"
+                style="flex:1; padding:10px 12px; margin:0; border-radius:10px; min-width:0;"
                 onkeydown="if(event.key==='Enter') createNewSession()" />
             <button class="btn btn-primary" onclick="createNewSession()"
-                style="width:46px;
-height:46px; font-size:22px; padding:0; border-radius:10px; flex-shrink:0;">+</button>
+                style="width:46px; height:46px; font-size:22px; padding:0; border-radius:10px; flex-shrink:0;">+</button>
         </div>
     </div>
 
+    <!-- ===== SCREEN 2: MAIN (add items) ===== -->
     <div class="screen" id="screen-main">
         <div class="app-header" style="position:relative;">
             <div class="app-logo">&#127897;</div>
             <div class="app-title">Adaugă articole</div>
             <div class="app-subtitle" id="firma-display">Listă articole</div>
             <button onclick="backToSessions()"
- 
-               style="position:absolute; top:0; right:0; background:var(--surface);
-border:1px solid var(--border); border-radius:10px; padding:7px 11px; font-size:18px; cursor:pointer; color:var(--muted); line-height:1;"
+                style="position:absolute; top:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:7px 11px; font-size:18px; cursor:pointer; color:var(--muted); line-height:1;"
                 title="Meniu liste">☰</button>
         </div>
 
@@ -781,8 +779,7 @@ border:1px solid var(--border); border-radius:10px; padding:7px 11px; font-size:
             <div class="step-dot active"></div>
             <div class="step-dot"></div>
             <div class="step-dot"></div>
-    
-     </div>
+        </div>
 
         <div class="mic-area">
             <button class="mic-btn" id="mic-btn" onclick="toggleMic()">&#127897;&#65039;</button>
@@ -792,17 +789,17 @@ border:1px solid var(--border); border-radius:10px; padding:7px 11px; font-size:
 
         <div class="divider">sau adaugă manual</div>
 
-        <div style="display:flex;
-gap:8px; margin-bottom:16px;">
+        <!-- manual input -->
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
             <input class="field-input" id="manual-input" type="text" placeholder="Scrie articolul..." style="flex:1;"
                 onkeydown="if(event.key==='Enter') addManual()" />
             <button class="btn btn-blue btn-sm" onclick="addManual()" style="min-width:60px;">+</button>
         </div>
 
+        <!-- list -->
         <div class="card" style="flex:1;">
             <div class="list-header">
-     
-            <div class="list-title">📋 Lista ta</div>
+                <div class="list-title">📋 Lista ta</div>
                 <div class="badge" id="counter-badge">0 articole</div>
             </div>
             <ul class="article-list" id="article-list">
@@ -810,18 +807,17 @@ gap:8px; margin-bottom:16px;">
             </ul>
         </div>
 
- 
         <button class="btn btn-success mt16" onclick="requestFinish()">
             ✅ FINALIZARE LISTĂ
         </button>
     </div>
 
+    <!-- ===== SCREEN 3: CONFIRM ARTICLE ===== -->
     <div class="screen" id="screen-confirm">
         <div class="app-header">
             <div class="app-logo">✔️</div>
             <div class="app-title">Confirmare articol</div>
-          
-  <div class="app-subtitle">Verifică articolul detectat</div>
+            <div class="app-subtitle">Verifică articolul detectat</div>
         </div>
 
         <div class="step-indicator">
@@ -832,8 +828,7 @@ gap:8px; margin-bottom:16px;">
         </div>
 
         <div class="confirm-question">Ai spus:</div>
-       
- <div class="confirm-word" id="confirm-word">–</div>
+        <div class="confirm-word" id="confirm-word">–</div>
 
         <div class="confirm-question" style="margin-top:8px;">Este corect?</div>
 
@@ -844,6 +839,7 @@ gap:8px; margin-bottom:16px;">
         </div>
     </div>
 
+    <!-- ===== SCREEN 3B: MODIFY ===== -->
     <div class="screen" id="screen-modify">
         <div class="app-header">
             <div class="app-logo">✏️</div>
@@ -852,8 +848,7 @@ gap:8px; margin-bottom:16px;">
 
         <div class="modify-hint">Corectează articolul de mai jos:</div>
         <input class="field-input" id="modify-input" type="text" placeholder="Scrie articolul corect..."
-            style="font-size:20px;
-font-weight:700; text-align:center;" />
+            style="font-size:20px; font-weight:700; text-align:center;" />
 
         <div class="btn-2col mt16">
             <button class="btn btn-outline" onclick="confirmCancel()">❌ Anulează</button>
@@ -861,11 +856,11 @@ font-weight:700; text-align:center;" />
         </div>
     </div>
 
+    <!-- ===== SCREEN 4: FINISH CONFIRM ===== -->
     <div class="screen" id="screen-finish">
         <div class="app-header">
             <div class="app-logo">📤</div>
-     
-        <div class="app-title">Finalizare listă</div>
+            <div class="app-title">Finalizare listă</div>
             <div class="app-subtitle">Verifică lista completă înainte de trimitere</div>
         </div>
 
@@ -874,8 +869,7 @@ font-weight:700; text-align:center;" />
             <div class="step-dot"></div>
             <div class="step-dot"></div>
             <div class="step-dot active"></div>
-   
-     </div>
+        </div>
 
         <div class="card">
             <div class="field-label mb8">📋 Lista ta finală (<span id="preview-count">0</span> articole)</div>
@@ -883,17 +877,16 @@ font-weight:700; text-align:center;" />
         </div>
 
         <div class="card">
-            <div class="confirm-question" style="font-size:15px;
-font-weight:600; color: var(--text);">Ai terminat de
+            <div class="confirm-question" style="font-size:15px; font-weight:600; color: var(--text);">Ai terminat de
                 adăugat toate articolele?</div>
             <div class="btn-2col mt12">
                 <button class="btn btn-outline" onclick="backToMain()">⬅ Nu, mai am</button>
                 <button class="btn btn-primary" id="send-btn" onclick="promptFirmaAndSend()">📤 Da, trimite!</button>
             </div>
-        
- </div>
+        </div>
     </div>
 
+    <!-- ===== SCREEN 4B: FIRMA INPUT ===== -->
     <div class="screen" id="screen-firma">
         <div class="app-header">
             <div class="app-logo">🏢</div>
@@ -902,8 +895,7 @@ font-weight:600; color: var(--text);">Ai terminat de
         </div>
 
         <div class="card">
-       
-             <div class="field-label">Numele firmei *</div>
+            <div class="field-label">Numele firmei *</div>
             <input class="field-input" id="input-firma-final" type="text" placeholder="ex: SC CAFENEA SRL"
                 autocomplete="organization" style="text-transform:uppercase;"
                 oninput="this.value=this.value.toUpperCase()" 
@@ -911,16 +903,15 @@ font-weight:600; color: var(--text);">Ai terminat de
         </div>
 
         <div class="btn-2col mt16">
-   
-         <button class="btn btn-outline" onclick="backToFinish()">⬅ Înapoi</button>
+            <button class="btn btn-outline" onclick="backToFinish()">⬅ Înapoi</button>
             <button class="btn btn-primary" onclick="sendListWithFirma()">📤 Trimite!</button>
         </div>
     </div>
 
+    <!-- ===== SCREEN 5: SUCCESS ===== -->
     <div class="screen" id="screen-success">
         <div class="success-icon">🎉</div>
-        <div class="success-title">Lista a fost trimisă!
-🎉</div>
+        <div class="success-title">Lista a fost trimisă! 🎉</div>
         <div class="success-msg" id="success-msg">Tehnicianul a primit lista.<br />Îți mulțumim!</div>
 
         <div class="card mt20">
@@ -929,8 +920,7 @@ font-weight:600; color: var(--text);">Ai terminat de
         </div>
 
         <button class="btn btn-primary mt16" onclick="backToSessions()">📂 Înapoi la listele mele</button>
-        <button class="btn btn-outline" style="margin-top:10px;"
-onclick="resetApp()">🔄 Listă nouă</button>
+        <button class="btn btn-outline" style="margin-top:10px;" onclick="resetApp()">🔄 Listă nouă</button>
     </div>
 
 
@@ -939,84 +929,82 @@ onclick="resetApp()">🔄 Listă nouă</button>
         // ║              ⚙️  CONFIGURARE – MODIFICĂ AICI                ║
         // ╠══════════════════════════════════════════════════════════════╣
         // ║  Înlocuiește URL-ul de mai jos cu link-ul tău Apps Script   ║
-     
-    // ║  după ce faci Deploy în Google Apps Script.
- ║
+        // ║  după ce faci Deploy în Google Apps Script.                  ║
         // ╚══════════════════════════════════════════════════════════════╝
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxx9D6yXlozRDj3cyUB2_QiBK-aiqnkOWNSnuMp_HZZ8VfDXjtuqR7F0wZ-jLLSrdSU/exec';
-// ===== STATE =====
+
+        // ===== STATE =====
         let articles = [];
         let pendingArticle = '';
-let recognition = null;
+        let recognition = null;
         let isListening = false;
         let currentSessionId = null;
-// ===== UTILS =====
+
+        // ===== UTILS =====
         function removeDiacritics(str) {
             const map = {
                 'ă': 'a', 'â': 'a', 'î': 'i', 'ș': 's', 'ş': 's', 'ț': 't', 'ţ': 't',
                 'Ă': 'A', 'Â': 'A', 'Î': 'I', 'Ș': 'S', 'Ş': 'S', 'Ț': 'T', 'Ţ': 'T'
             };
-return str.replace(/[ăâîșşțţĂÂÎȘŞȚŢ]/g, m => map[m] || m);
+            return str.replace(/[ăâîșşțţĂÂÎȘŞȚŢ]/g, m => map[m] || m);
         }
 
         function normalizeText(str) {
             return removeDiacritics(str.trim().toUpperCase());
-}
+        }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+            document.getElementById(id).classList.add('active');
             window.scrollTo(0, 0);
         }
 
         function updateCounter() {
             const n = articles.length;
-document.getElementById('counter-badge').textContent = n + (n === 1 ? ' articol' : ' articole');
-}
+            document.getElementById('counter-badge').textContent = n + (n === 1 ? ' articol' : ' articole');
+        }
 
         function renderList() {
             const ul = document.getElementById('article-list');
-if (articles.length === 0) {
+            if (articles.length === 0) {
                 ul.innerHTML = '<li class="empty-list">Niciun articol adăugat încă.</li>';
-} else {
+            } else {
                 ul.innerHTML = articles.map((a, i) =>
                     `<li class="article-item">
           <span class="article-num">${i + 1}.</span>
           <span class="article-name">${a}</span>
           <button class="article-del" onclick="deleteArticle(${i})" title="Șterge">✕</button>
         </li>`
-            
-    ).join('');
+                ).join('');
                 // scroll to bottom
                 ul.scrollTop = ul.scrollHeight;
-}
+            }
             updateCounter();
-}
+        }
 
         function deleteArticle(idx) {
             articles.splice(idx, 1);
-renderList();
+            renderList();
         }
 
         // ===== LOCALSTORAGE MULTI-SESIUNE =====
-        function lsKey() { return 'lista_cmc_articole';
-}
+        function lsKey() { return 'lista_cmc_articole'; }
 
         function getStorage() {
             const raw = localStorage.getItem(lsKey());
-if (!raw) return null;
+            if (!raw) return null;
             try {
                 const data = JSON.parse(raw);
-return data;
+                return data;
             } catch (e) { 
-                localStorage.removeItem(lsKey());
-return null; 
+                localStorage.removeItem(lsKey()); 
+                return null; 
             }
         }
 
         function putStorage(data) {
             localStorage.setItem(lsKey(), JSON.stringify(data));
-}
+        }
 
         // ===== INIT =====
         window.addEventListener('DOMContentLoaded', () => {
@@ -1024,250 +1012,246 @@ return null;
             if (stored && stored.sessions && stored.sessions.length > 0) {
                 showSessionsMenu(stored.sessions);
             } else {
-             
-    startNewSession('Lista 1');
+                startNewSession('Lista 1');
             }
         });
-function showSessionsMenu(sessions) {
+
+        function showSessionsMenu(sessions) {
             document.getElementById('sessions-list').innerHTML = sessions.map((s, idx) => `
                 <div class="card session-card" onclick="selectSession('${s.id}')">
                     <div style="flex:1; min-width:0;">
                         <div class="session-card-name">${s.name || 'Lista ' + (idx + 1)}</div>
-        
-                <div class="session-card-meta">${s.articles.length} articole</div>
+                        <div class="session-card-meta">${s.articles.length} articole</div>
                     </div>
                     <span class="${s.sent ? 'badge-sent' : 'badge-draft'}">${s.sent ? '✅ Trimisă' : '📝 În curs'}</span>
                     <button class="session-del" onclick="event.stopPropagation(); deleteSession('${s.id}')" title="Şterge">✕</button>
-      
-          </div>
+                </div>
             `).join('');
-showScreen('screen-sessions');
+            showScreen('screen-sessions');
         }
 
         function selectSession(id) {
             const stored = getStorage();
-const session = stored && stored.sessions.find(s => s.id === id);
+            const session = stored && stored.sessions.find(s => s.id === id);
             if (!session) return;
             currentSessionId = id;
             articles = session.articles.slice();
             renderList();
-goToMain();
+            goToMain();
         }
 
         function createNewSession() {
             const inp = document.getElementById('new-session-name').value.trim();
-const stored = getStorage() || { sessions: [] };
+            const stored = getStorage() || { sessions: [] };
             const name = inp || ('Lista ' + (stored.sessions.length + 1));
-startNewSession(name);
+            startNewSession(name);
         }
 
         function startNewSession(name) {
             currentSessionId = Date.now().toString();
-let stored = getStorage() || { sessions: [] };
+            let stored = getStorage() || { sessions: [] };
             stored.sessions.push({ 
                 id: currentSessionId, 
                 name, 
                 articles: [], 
                 sent: false, 
                 savedAt: new Date().toISOString() 
-
             });
             putStorage(stored);
             articles = [];
             renderList();
-const inp = document.getElementById('new-session-name');
+            const inp = document.getElementById('new-session-name');
             if (inp) inp.value = '';
             goToMain();
-}
+        }
 
         function deleteSession(id) {
             const stored = getStorage();
-if (!stored) return;
+            if (!stored) return;
             stored.sessions = stored.sessions.filter(s => s.id !== id);
-if (stored.sessions.length === 0) {
+            if (stored.sessions.length === 0) {
                 localStorage.removeItem(lsKey());
-startNewSession('Lista 1');
+                startNewSession('Lista 1');
                 return;
             }
             putStorage(stored);
             showSessionsMenu(stored.sessions);
-}
+        }
 
         function saveSession() {
             if (!currentSessionId || articles.length === 0) return;
-const stored = getStorage() || { sessions: [] };
+            const stored = getStorage() || { sessions: [] };
             const idx = stored.sessions.findIndex(s => s.id === currentSessionId);
-if (idx >= 0) {
+            if (idx >= 0) {
                 stored.sessions[idx].articles = articles.slice();
-stored.sessions[idx].savedAt = new Date().toISOString();
+                stored.sessions[idx].savedAt = new Date().toISOString();
             }
             putStorage(stored);
-}
+        }
 
         function backToSessions() {
             const stored = getStorage();
-currentSessionId = null;
+            currentSessionId = null;
             articles = [];
             renderList();
             if (stored && stored.sessions && stored.sessions.length > 0) {
                 showSessionsMenu(stored.sessions);
-} else {
+            } else {
                 startNewSession('Lista 1');
-}
+            }
         }
 
         function goToMain() {
             showScreen('screen-main');
-initSpeech();
+            initSpeech();
         }
 
         // ===== SPEECH API =====
         function initSpeech() {
-            const SpeechRecognition = window.SpeechRecognition ||
-window.webkitSpeechRecognition;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 document.getElementById('mic-status').textContent = '⚠️ Vocea nu e suportată în acest browser.';
-document.getElementById('mic-btn').disabled = true;
+                document.getElementById('mic-btn').disabled = true;
                 document.getElementById('mic-btn').style.opacity = '0.4';
                 return;
             }
             recognition = new SpeechRecognition();
-recognition.lang = 'ro-RO';
+            recognition.lang = 'ro-RO';
             recognition.interimResults = true;
             recognition.maxAlternatives = 1;
 
             recognition.onspeechend = () => {
                 document.getElementById('mic-status').textContent = '⏳ Procesez...';
-};
+            };
 
             recognition.onresult = (e) => {
                 let interim = '';
-let final = '';
+                let final = '';
                 for (let i = e.resultIndex; i < e.results.length; i++) {
                     if (e.results[i].isFinal) {
                         final += e.results[i][0].transcript;
-} else {
+                    } else {
                         interim += e.results[i][0].transcript;
-}
+                    }
                 }
 
                 if (interim) {
                     document.getElementById('mic-status').textContent = '🎙 ' + interim;
-// Dupa 200ms fara vorbire noua → confirmare instantanee cu textul deja afisat
+
+                    // Dupa 200ms fara vorbire noua → confirmare instantanee cu textul deja afisat
                     clearTimeout(window._silenceTimer);
-window._silenceTimer = setTimeout(() => {
+                    window._silenceTimer = setTimeout(() => {
                         if (!isListening) return;
                         const captured = document.getElementById('mic-status')
                             .textContent.replace('🎙 ', '').trim();
-             
-           if (captured) {
+                        if (captured) {
                             pendingArticle = normalizeText(captured);
                             stopListening();
                             showConfirm(pendingArticle);
- 
-                       }
+                        }
                     }, 200);
-}
+                }
 
                 if (final) {
                     clearTimeout(window._silenceTimer);
-const confidence = e.results[e.results.length - 1][0].confidence;
+                    const confidence = e.results[e.results.length - 1][0].confidence;
                     if (confidence > 0 && confidence < 0.45) {
                         document.getElementById('mic-status').textContent = '🔇 Zgomot ignorat, încearcă din nou';
-setTimeout(() => stopListening(), 1500);
+                        setTimeout(() => stopListening(), 1500);
                         return;
                     }
                     pendingArticle = normalizeText(final);
-stopListening();
+                    stopListening();
                     showConfirm(pendingArticle);
                 }
             };
-recognition.onerror = (e) => {
+
+            recognition.onerror = (e) => {
                 stopListening();
-hideOverlay();
+                hideOverlay();
                 if (e.error !== 'no-speech' && e.error !== 'aborted') {
                     document.getElementById('mic-status').textContent = '⚠️ Eroare la microfon.';
-}
+                }
             };
-recognition.onend = () => { if (isListening) stopListening(); };
+
+            recognition.onend = () => { if (isListening) stopListening(); };
         }
 
         function toggleMic() {
-            if (isListening) { stopListening();
-return; }
+            if (isListening) { stopListening(); return; }
             startListening();
-}
+        }
 
         function startListening() {
             if (!recognition) return;
-isListening = true;
+            isListening = true;
             try { recognition.start(); } catch (ex) { }
             const btn = document.getElementById('mic-btn');
-btn.classList.add('listening');
+            btn.classList.add('listening');
             btn.textContent = '⏹';
             document.getElementById('mic-status').textContent = '🔴 Ascult... rostește articolul!';
             document.getElementById('mic-status').style.color = '';
-}
+        }
 
         function stopListening() {
             isListening = false;
-if (recognition) { try { recognition.stop(); } catch (e) { } }
+            if (recognition) { try { recognition.stop(); } catch (e) { } }
             if (window._micStream) {
                 window._micStream.getTracks().forEach(t => t.stop());
-window._micStream = null;
+                window._micStream = null;
             }
             const btn = document.getElementById('mic-btn');
             btn.classList.remove('listening');
-btn.textContent = '🎙️';
+            btn.textContent = '🎙️';
             const st = document.getElementById('mic-status');
             st.textContent = '';
             st.style.color = '';
-}
+        }
 
         function hideOverlay() {
             document.getElementById('processing-overlay').classList.remove('show');
-}
+        }
 
         // ===== MANUAL INPUT =====
         function addManual() {
             const val = document.getElementById('manual-input').value.trim();
-if (!val) return;
+            if (!val) return;
             pendingArticle = normalizeText(val);
             document.getElementById('manual-input').value = '';
             showConfirm(pendingArticle);
-}
+        }
 
         // ===== SCREEN 3: CONFIRM (folosit doar pentru modificare manuala) =====
         function showConfirm(word) {
             hideOverlay();
-document.getElementById('confirm-word').textContent = word;
+            document.getElementById('confirm-word').textContent = word;
             showScreen('screen-confirm');
         }
 
         function confirmYes() {
             if (pendingArticle) {
                 articles.push(pendingArticle);
-renderList();
+                renderList();
                 saveSession();
             }
             pendingArticle = '';
             showScreen('screen-main');
-}
+        }
 
         function confirmModify() {
             document.getElementById('modify-input').value = pendingArticle;
-showScreen('screen-modify');
+            showScreen('screen-modify');
         }
 
         function confirmCancel() {
             pendingArticle = '';
-showScreen('screen-main');
+            showScreen('screen-main');
         }
 
         // ===== SCREEN 3B: MODIFY =====
         function modifyConfirm() {
             const val = document.getElementById('modify-input').value.trim();
-if (!val) return;
+            if (!val) return;
             pendingArticle = normalizeText(val);
             showConfirm(pendingArticle);
         }
@@ -1276,101 +1260,95 @@ if (!val) return;
         function requestFinish() {
             if (articles.length === 0) {
                 alert('Lista este goală! Adaugă cel puțin un articol.');
-return;
+                return;
             }
             // populate preview
             document.getElementById('preview-count').textContent = articles.length;
-document.getElementById('preview-list').innerHTML =
+            document.getElementById('preview-list').innerHTML =
                 articles.map((a, i) => `<div><span>${i + 1}.</span>${a}</div>`).join('');
-showScreen('screen-finish');
+            showScreen('screen-finish');
         }
 
         function backToMain() {
             showScreen('screen-main');
-}
+        }
 
         function backToFinish() {
             showScreen('screen-finish');
-}
+        }
 
         // ===== SCREEN 4B: FIRMA PROMPT =====
         function promptFirmaAndSend() {
             document.getElementById('input-firma-final').value = '';
-showScreen('screen-firma');
+            showScreen('screen-firma');
             // Focus pe input dupa un mic delay
             setTimeout(() => {
                 document.getElementById('input-firma-final').focus();
             }, 300);
-}
+        }
 
         // ===== SEND =====
         function sendListWithFirma() {
-            const firma = document.getElementById('input-firma-final').value.trim();
-            if (!firma) {
-                alert('Te rugăm să introduci numele firmei.');
-                return;
-            }
+    const firma = document.getElementById('input-firma-final').value.trim();
+    if (!firma) {
+        alert('Te rugăm să introduci numele firmei.');
+        return;
+    }
 
-            const payload = {
-                firma: firma,
-                cui: 'N/A',
-                articole: articles,
-                timestamp: new Date().toLocaleString('ro-RO')
-            };
-            
-            // Dezactivare butoane pentru a preveni dubla-trimitere
-            const allButtons = document.querySelectorAll('#screen-firma button');
-            allButtons.forEach(btn => btn.disabled = true);
-            
-            // Preluăm butonul de trimitere și îi adăugăm spinner-ul
-            const sendBtn = document.querySelector('#screen-firma .btn-primary');
-            const originalText = sendBtn.innerHTML; // Salvăm textul original
-            sendBtn.innerHTML = '<span class="spinner"></span> Se trimite...';
+    const payload = {
+        firma: firma,
+        cui: 'N/A',
+        articole: articles,
+        timestamp: new Date().toLocaleString('ro-RO')
+    };
 
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                mode: 'no-cors'
-            })
-                 .then(() => {
-                    // Resetare buton și afișare succes
-                    sendBtn.innerHTML = originalText;
-                    allButtons.forEach(btn => btn.disabled = false);
-                    showSuccess(firma, articles);
-                })
-                .catch(() => {
-                    // Resetare buton și afișare succes (tratat ca succes din cauza no-cors)
-                    sendBtn.innerHTML = originalText;
-                    allButtons.forEach(btn => btn.disabled = false);
-                    showSuccess(firma, articles); 
-                });
-        }
+    // Selectam butonul Trimite
+    const sendBtn = document.querySelector('#screen-firma .btn-primary');
+
+    // Dezactivam butoanele
+    const allButtons = document.querySelectorAll('#screen-firma button');
+    allButtons.forEach(btn => btn.disabled = true);
+
+    // Afisam spinner in buton
+    sendBtn.innerHTML = '<span class="spinner"></span>';
+
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        mode: 'no-cors'
+    })
+        .then(() => {
+            showSuccess(firma, articles);
+        })
+        .catch(() => {
+            showSuccess(firma, articles);
+        });
+}
 
         function showSuccess(firma, arts) {
             // Marcam sesiunea curenta ca trimisa
             const stored = getStorage();
-if (stored && currentSessionId) {
+            if (stored && currentSessionId) {
                 const idx = stored.sessions.findIndex(s => s.id === currentSessionId);
-if (idx >= 0) {
+                if (idx >= 0) {
                     stored.sessions[idx].sent = true;
-stored.sessions[idx].articles = arts.slice();
+                    stored.sessions[idx].articles = arts.slice();
                     stored.sessions[idx].firma = firma; // Salvam si firma
                     putStorage(stored);
-}
+                }
             }
             document.getElementById('success-msg').innerHTML =
-                `<strong>${firma}</strong> — tehnicianul a primit lista!<br/>Mulțumim și pe curând!
-😊`;
+                `<strong>${firma}</strong> — tehnicianul a primit lista!<br/>Mulțumim și pe curând! 😊`;
             document.getElementById('success-preview').innerHTML =
                 arts.map((a, i) => `<div><span>${i + 1}.</span>${a}</div>`).join('');
-showScreen('screen-success');
+            showScreen('screen-success');
         }
 
         // ===== RESET =====
         function resetApp() {
             currentSessionId = null;
-articles = [];
+            articles = [];
             pendingArticle = '';
             renderList();
             startNewSession('Lista nouă');
